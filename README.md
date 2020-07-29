@@ -1,6 +1,15 @@
 ## s a n d s i f t e r 
 : the x86 processor fuzzer
 
+### Fork changes
+I swapped capstone for a simple implementation for bddisasm so that we can fuzz it.
+Therefore currently the only supported output is that the instruction does execute, but bddisasm doesn't recognize it. 
+Sample use: 
+sudo ./injector -P1 >> results
+grep "unk"
+
+Consequently we can filter by signal 
+
 ### Overview
 
 The sandsifter audits x86 processors for hidden instructions and hardware bugs,
