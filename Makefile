@@ -1,3 +1,4 @@
+CC=gcc
 # sand sifter make file
 #
 # in x86, instructions run in 32 bit mode sometimes differ from the same
@@ -31,11 +32,14 @@
 
 all: injector
 
+ 
 injector: injector.o
-	$(CC) $(CFLAGS) $< -O3 -Wall -l:libcapstone.a -o $@ -pthread
+	$(CC) $(CFLAGS) $< -O3  -Wall -g  -l:libcapstone.a  -lbddisasm -Lbddisasm/bin/x64/Release -o $@ -pthread -no-pie -lrt -Ibddisasm/inc/
+
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@ -Wall
+	$(CC) $(CFLAGS) -c $< -o $@  -g -Wall -no-pie -D_FILE_OFFSET_BITS=64  -lbddisasm -Lbddisasm/bin/x64/Release -Ibddisasm/inc/
+
 
 clean:
 	rm *.o injector

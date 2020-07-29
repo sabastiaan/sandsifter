@@ -24,6 +24,10 @@
 #include <pthread.h>
 #include <sys/wait.h>
 
+#include "bddisasm/disasmtypes.h"
+#include "bddisasm/bddisasm.h"
+
+
 /* configuration */
 
 struct {
@@ -366,6 +370,27 @@ bool move_next_range(void);
 extern char debug, resume, preamble_start, preamble_end;
 static int expected_length;
 
+/* bddisasm */ 
+ 
+int nd_vsnprintf_s( 
+    char *buffer, 
+    size_t sizeOfBuffer, 
+    size_t count, 
+    const char *format, 
+    va_list argptr 
+    ) 
+{ 
+    return vsnprintf(buffer, sizeOfBuffer, format, argptr); 
+} 
+
+void* nd_memset(void *s, int c, size_t n) 
+{ 
+    return memset(s, c, n); 
+}
+
+
+
+
 void sync_fprintf(FILE* f, const char *format, ...)
 {
 	va_list args;
@@ -550,21 +575,13 @@ int print_asm(FILE* f)
 		uint8_t* code=inj.i.bytes;
 		size_t code_size=MAX_INSN_LENGTH;
 		uint64_t address=(uintptr_t)packet_buffer;
-	
-		if (cs_disasm_iter(
-				capstone_handle,
-				(const uint8_t**)&code,
-				&code_size,
-				&address,
-				capstone_insn)
-			) {
-			sync_fprintf(
-				f,
-				"%10s %-45s (%2d)",
-				capstone_insn[0].mnemonic,
-				capstone_insn[0].op_str,
-				(int)(address-(uintptr_t)packet_buffer)
-				);
+        
+        INSTRUX ix;
+        NDSTATUS status;
+
+        status = NdDecodeEx(&ix, inj.i.bytes, MAX_INSN_LENGTH, ND_CODE_64, ND_DATA_64);
+        if (ND_SUCCESS(status))
+        {
 		}
 		else {
 			sync_fprintf(
