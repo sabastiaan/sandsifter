@@ -8,7 +8,8 @@ Sample use:
 sudo ./injector -P1 >> results
 grep "unk"
 
-Consequently we can filter by signal 
+Consequently we can filter by signal. 
+Note that using the sifter.py still uses capstone for it's reporting. 
 
 ### Overview
 
