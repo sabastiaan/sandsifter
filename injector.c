@@ -586,11 +586,16 @@ int print_asm(FILE* f)
 		else {
 			sync_fprintf(
 				f,
-				"%10s %-45s (%2d)",
+				" %s (%2d) ",
 				"(unk)",
-				" ",
-				(int)(address-(uintptr_t)packet_buffer)
+                result.length
 				);
+            if (result.signum==SIGILL)  { sync_fprintf(f, "sigill "); }
+            if (result.signum==SIGSEGV) { sync_fprintf(f, "sigsegv"); }
+            if (result.signum==SIGFPE)  { sync_fprintf(f, "sigfpe "); }
+            if (result.signum==SIGBUS)  { sync_fprintf(f, "sigbus "); }
+            if (result.signum==SIGTRAP) { sync_fprintf(f, "sigtrap"); }
+            sync_fprintf(f, " si_code %3d ", result.si_code);
 		}
 		expected_length=(int)(address-(uintptr_t)packet_buffer);
 	}
@@ -1130,16 +1135,16 @@ void give_result(FILE* f)
 				case TUNNEL:
 				case RAND:
 				case DRIVEN:
-					sync_fprintf(f, " %s", expected_length==result.length?" ":".");
-					sync_fprintf(f, "r: (%2d) ", result.length);
-					if (result.signum==SIGILL)  { sync_fprintf(f, "sigill "); }
-					if (result.signum==SIGSEGV) { sync_fprintf(f, "sigsegv"); }
-					if (result.signum==SIGFPE)  { sync_fprintf(f, "sigfpe "); }
-					if (result.signum==SIGBUS)  { sync_fprintf(f, "sigbus "); }
-					if (result.signum==SIGTRAP) { sync_fprintf(f, "sigtrap"); }
-					sync_fprintf(f, " %3d ", result.si_code);
-					sync_fprintf(f, " %08x ", result.addr);
-					print_mc(f, result.length);
+					//sync_fprintf(f, " %s", expected_length==result.length?" ":".");
+					//sync_fprintf(f, "r: (%2d) ", result.length);
+				//	if (result.signum==SIGILL)  { sync_fprintf(f, "sigill "); }
+				//	if (result.signum==SIGSEGV) { sync_fprintf(f, "sigsegv"); }
+				//	if (result.signum==SIGFPE)  { sync_fprintf(f, "sigfpe "); }
+				//	if (result.signum==SIGBUS)  { sync_fprintf(f, "sigbus "); }
+				//	if (result.signum==SIGTRAP) { sync_fprintf(f, "sigtrap"); }
+				//	sync_fprintf(f, " %3d ", result.si_code);
+				//	sync_fprintf(f, " %08x ", result.addr);
+				//	print_mc(f, result.length);
 					sync_fprintf(f, "\n");
 					break;
 				default:
@@ -1388,9 +1393,7 @@ void pretext(void)
 {
 	/* assistive output for analyzing hangs in text mode */
 	if (output==TEXT) {
-		sync_fprintf(stdout, "r: ");
-		print_mc(stdout, 8);
-		sync_fprintf(stdout, "... ");
+		print_mc(stdout, 10); //doesn't really go further than this
 		#if USE_CAPSTONE
 		print_asm(stdout);
 		sync_fprintf(stdout, " ");
