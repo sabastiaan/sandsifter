@@ -5,8 +5,10 @@
 I swapped capstone for a simple implementation for bddisasm so that we can fuzz it.
 Therefore currently the only supported output is that the instruction does execute, but bddisasm doesn't recognize it. 
 Sample use: 
-sudo ./injector -P1 >> results
-grep "unk"
+```
+sudo ./injector -P1 -t -0 >> results
+grep "unk" results
+```
 
 Consequently we can filter by signal. 
 Note that using the sifter.py still uses capstone for it's reporting. 
