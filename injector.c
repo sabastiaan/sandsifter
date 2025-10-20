@@ -28,6 +28,7 @@
 #include "bddisasm.h"
 
 
+#include <stdarg.h>
 
 /* configuration */
 
@@ -67,7 +68,7 @@ struct {
 #define USE_CAPSTONE true /* sifter offloads some capstone work to injector */
 
 #if USE_CAPSTONE
-	#include <capstone/capstone.h>
+	//#include <capstone/capstone.h>
 	#if __x86_64__
 		#define CS_MODE CS_MODE_64
 	#else
