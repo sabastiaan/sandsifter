@@ -76,8 +76,8 @@ struct {
 #endif
 
 #if USE_CAPSTONE
-csh capstone_handle;
-cs_insn *capstone_insn;
+// csh capstone_handle;
+// cs_insn *capstone_insn;
 #endif
 
 /* 32 vs 64 */
@@ -1155,51 +1155,51 @@ void give_result(FILE* f)
 			}
 			break;
 		case RAW:
-#if USE_CAPSTONE
-			code=inj.i.bytes;
-			code_size=MAX_INSN_LENGTH;
-			address=(uintptr_t)packet_buffer;
+// #if USE_CAPSTONE
+// 			code=inj.i.bytes;
+// 			code_size=MAX_INSN_LENGTH;
+// 			address=(uintptr_t)packet_buffer;
 		
-			if (cs_disasm_iter(
-					capstone_handle,
-					(const uint8_t**)&code,
-					&code_size,
-					&address,
-					capstone_insn)
-				) {
-#if RAW_REPORT_DISAS_MNE 
-				strncpy(disas.mne, capstone_insn[0].mnemonic, RAW_DISAS_MNEMONIC_BYTES);
-#endif
-#if RAW_REPORT_DISAS_OPS
-				strncpy(disas.ops, capstone_insn[0].op_str, RAW_DISAS_OP_BYTES);
-#endif
-#if RAW_REPORT_DISAS_LEN
-				disas.len=(int)(address-(uintptr_t)packet_buffer);
-#endif
-#if RAW_REPORT_DISAS_VAL
-				disas.val=true;
-#endif
-			}
-			else {
-#if RAW_REPORT_DISAS_MNE 
-				strncpy(disas.mne, "(unk)", RAW_DISAS_MNEMONIC_BYTES);
-#endif
-#if RAW_REPORT_DISAS_OPS
-				strncpy(disas.ops, " ", RAW_DISAS_OP_BYTES);
-#endif
-#if RAW_REPORT_DISAS_LEN
-				disas.len=(int)(address-(uintptr_t)packet_buffer);
-#endif
-#if RAW_REPORT_DISAS_VAL
-				disas.val=false;
-#endif
-			}
-#if RAW_REPORT_DISAS_MNE || RAW_REPORT_DISAS_OPS || RAW_REPORT_DISAS_LEN
-			sync_fwrite(&disas, sizeof(disas), 1, stdout);
-#endif
-#endif
-			sync_fwrite(inj.i.bytes, RAW_REPORT_INSN_BYTES, 1, stdout);
-			sync_fwrite(&result, sizeof(result), 1, stdout);
+// 			if (cs_disasm_iter(
+// 					capstone_handle,
+// 					(const uint8_t**)&code,
+// 					&code_size,
+// 					&address,
+// 					capstone_insn)
+// 				) {
+// #if RAW_REPORT_DISAS_MNE 
+// 				strncpy(disas.mne, capstone_insn[0].mnemonic, RAW_DISAS_MNEMONIC_BYTES);
+// #endif
+// #if RAW_REPORT_DISAS_OPS
+// 				strncpy(disas.ops, capstone_insn[0].op_str, RAW_DISAS_OP_BYTES);
+// #endif
+// #if RAW_REPORT_DISAS_LEN
+// 				disas.len=(int)(address-(uintptr_t)packet_buffer);
+// #endif
+// #if RAW_REPORT_DISAS_VAL
+// 				disas.val=true;
+// #endif
+// 			}
+// 			else {
+// #if RAW_REPORT_DISAS_MNE 
+// 				strncpy(disas.mne, "(unk)", RAW_DISAS_MNEMONIC_BYTES);
+// #endif
+// #if RAW_REPORT_DISAS_OPS
+// 				strncpy(disas.ops, " ", RAW_DISAS_OP_BYTES);
+// #endif
+// #if RAW_REPORT_DISAS_LEN
+// 				disas.len=(int)(address-(uintptr_t)packet_buffer);
+// #endif
+// #if RAW_REPORT_DISAS_VAL
+// 				disas.val=false;
+// #endif
+// 			}
+// #if RAW_REPORT_DISAS_MNE || RAW_REPORT_DISAS_OPS || RAW_REPORT_DISAS_LEN
+// 			sync_fwrite(&disas, sizeof(disas), 1, stdout);
+// #endif
+// #endif
+// 			sync_fwrite(inj.i.bytes, RAW_REPORT_INSN_BYTES, 1, stdout);
+// 			sync_fwrite(&result, sizeof(result), 1, stdout);
 			/* fflush(stdout); */
 			break;
 		default:
@@ -1407,7 +1407,7 @@ void pretext(void)
 
 int setup_altstack(void) {
     size_t stack_size = SIGSTKSZ;
-    stack = (char*)malloc(stack_size);
+    stack = malloc(stack_size);
     if (!stack) {
         perror("malloc");
         return -1;
@@ -1474,10 +1474,10 @@ int main(int argc, char** argv)
 	}
 
 #if USE_CAPSTONE
-	if (cs_open(CS_ARCH_X86, CS_MODE, &capstone_handle) != CS_ERR_OK) {
-		exit(1);
-	}
-	capstone_insn = cs_malloc(capstone_handle);
+	// if (cs_open(CS_ARCH_X86, CS_MODE, &capstone_handle) != CS_ERR_OK) {
+	// 	exit(1);
+	// }
+	// capstone_insn = cs_malloc(capstone_handle);
 #endif
 
 	if (config.enable_null_access) {
@@ -1540,8 +1540,8 @@ int main(int argc, char** argv)
 	/* sync_fprintf(stderr, "lazarus!\n"); */
 
 #if USE_CAPSTONE
-	cs_free(capstone_insn, 1);
-	cs_close(&capstone_handle);
+	// cs_free(capstone_insn, 1);
+	// cs_close(&capstone_handle);
 #endif
 
 	if (config.enable_null_access) {
