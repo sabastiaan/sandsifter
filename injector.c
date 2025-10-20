@@ -24,8 +24,9 @@
 #include <pthread.h>
 #include <sys/wait.h>
 
-#include "bddisasm/disasmtypes.h"
-#include "bddisasm/bddisasm.h"
+#include "disasmtypes.h"
+#include "bddisasm.h"
+
 
 
 /* configuration */
@@ -172,8 +173,10 @@ search_mode_t mode=TUNNEL;
 void* packet_buffer;
 char* packet;
 
-static char stack[SIGSTKSZ];
-stack_t ss = { .ss_size = SIGSTKSZ, .ss_sp = stack, };
+
+
+static char* stack;
+stack_t ss;
 
 struct {
 	uint64_t dummy_stack_hi[256];
@@ -1402,11 +1405,33 @@ void pretext(void)
 	}
 }
 
+int setup_altstack(void) {
+    size_t stack_size = SIGSTKSZ;
+    stack = (char*)malloc(stack_size);
+    if (!stack) {
+        perror("malloc");
+        return -1;
+    }
+
+    ss.ss_sp = stack;
+    ss.ss_size = stack_size;
+    ss.ss_flags = 0;
+
+    if (sigaltstack(&ss, NULL) == -1) {
+        perror("sigaltstack");
+        free(stack);
+        return -1;
+    }
+
+    return 0;
+}
+
 int main(int argc, char** argv)
 {
 	int pid;
 	int job=0;
 	int i;
+	setup_altstack();
 	void* packet_buffer_unaligned;
 	void* null_p;
 
