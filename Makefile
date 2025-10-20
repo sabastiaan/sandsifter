@@ -34,7 +34,7 @@ all: injector
 
  
 injector: injector.o
-	$(CC) $(CFLAGS) $< -O3  -Wall -g  -l:libcapstone.a  -lbddisasm -Lbddisasm/bin/x64/Release -o $@ -pthread -no-pie -lrt -Ibddisasm/inc/
+	$(CC) $(CFLAGS) $< -O3  -Wall -g  -lbddisasm -Lbddisasm/bin/x64/Release -o $@ -pthread -no-pie -lrt -Ibddisasm/inc/
 
 
 %.o: %.c
